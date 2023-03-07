@@ -34,6 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Branch.io - Function used to enable Branch logging
         Branch.getInstance().enableLogging()
         
+        // enable pasteboard check
+        Branch.getInstance().checkPasteboardOnInstall()
+        
         // Branch.io - Initialize Branch SDK
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             // do stuff with deep link data (nav to page, display content, etc)

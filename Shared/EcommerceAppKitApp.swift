@@ -31,11 +31,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Branch.io - Function used to enable Branch logging
         Branch.getInstance().enableLogging()
         
-        // Initialize Branch SDK
+        // Branch.io - Initialize Branch SDK
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             // do stuff with deep link data (nav to page, display content, etc)
             print(params as? [String: AnyObject] ?? {})
             
+            // Branch.io - Check for a "productId" parameter and navigate to the corresponding view
+            if let productId = params?["$canonical_url"] as? String {
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.4, execute:{
+                    NotificationCenter.default.post(name: Notification.Name("HANDLEDEEPLINK"), object: nil, userInfo: ["product_id": productId])
+                })
+            }
         }
         return true
     }

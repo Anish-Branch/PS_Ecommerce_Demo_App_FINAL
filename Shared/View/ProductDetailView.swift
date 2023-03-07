@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import BranchSDK
 
 struct ProductDetailView: View {
     var product: Product
     
     // For Matched Geometry Effect...
     var animation: Namespace.ID
+    
+    // Branch.io - Create instance of the Branch Universal Object and Branch Link Properties
+    internal var buo = BranchUniversalObject()
+    internal var lp = BranchLinkProperties()
     
     // Shared Data Model...
     @EnvironmentObject var sharedData: SharedDataModel
@@ -120,6 +125,7 @@ struct ProductDetailView: View {
                     // Add button...
                     Button {
                         addToCart()
+                        branchEventAddToCart()
                     } label: {
                         Text("\(isAddedToCart() ? "added" : "add") to basket")
                             .font(.custom(customFont, size: 20).bold())
@@ -191,6 +197,33 @@ struct ProductDetailView: View {
             // add to liked
             sharedData.cartProducts.append(product)
         }
+    }
+    // Branch.io - Track Event - Add To Cart
+    func branchEventAddToCart(){
+        // Create a BranchUniversalObject with your content data:
+        let branchUniversalObject = BranchUniversalObject.init()
+
+        // ...add data to the branchUniversalObject as needed...
+        branchUniversalObject.title               = product.title
+
+        branchUniversalObject.contentMetadata.contentSchema     = .commerceProduct
+        branchUniversalObject.contentMetadata.quantity          = 1
+        branchUniversalObject.contentMetadata.price             = product.sellingPrice
+        branchUniversalObject.contentMetadata.currency          = .USD
+        branchUniversalObject.contentMetadata.productName       = product.title
+        branchUniversalObject.contentMetadata.productVariant    = product.subtitle
+
+        // Create a BranchEvent:
+        let event = BranchEvent.standardEvent(.addToCart)
+
+        // Add the BranchUniversalObject with the content (do not add an empty branchUniversalObject):
+        event.contentItems     = [ branchUniversalObject ]
+
+        // Add relevant event data:
+        event.alias            = "my custom alias anish"
+        event.currency         = .USD
+        event.eventDescription = "Event_description anish"
+        event.logEvent() // Log the event.
     }
 }
 

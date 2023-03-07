@@ -7,6 +7,8 @@
 
 import SwiftUI
 import BranchSDK
+import AppTrackingTransparency
+import AdSupport
 
 @main
 struct EcommerceAppKitApp: App {
@@ -24,6 +26,7 @@ struct EcommerceAppKitApp: App {
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    
         
         // Branch.io - Test your Branch Integration by calling validateSDKIntegration in your AppDelegate. Check your Xcode logs to make sure all the SDK Integration tests pass. Make sure to comment out or remove validateSDKIntegration in your production build.
         // Branch.getInstance().validateSDKIntegration()

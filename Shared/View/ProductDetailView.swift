@@ -96,7 +96,7 @@ struct ProductDetailView: View {
                         .foregroundColor(.gray)
                     
                     Button {
-                        
+                        didTapShareDeepLink()
                     } label: {
                         
                         // Since we need image at right...
@@ -225,6 +225,45 @@ struct ProductDetailView: View {
         event.eventDescription = "Event_description anish"
         event.logEvent() // Log the event.
     }
+
+    // Branch.io - Set Branch Universal Object for product
+    func didTapShareDeepLink() {
+        // Set BUO (Branch Universal Object) Properties
+        buo.title = product.title
+        buo.contentDescription = product.subtitle
+        buo.imageUrl = "https://branch.io/img/logo-dark.svg"
+        buo.publiclyIndex = true
+        buo.locallyIndex = true
+        buo.canonicalUrl = "https://www.apple.com/imacpurple"
+        
+        // Branch.io - Set Deep Link Properties
+
+        lp.channel = "In-app"
+        lp.feature = "sharing"
+        lp.campaign = "messaging"
+        lp.addControlParam("$desktop_url", withValue: "https://help.branch.io/")
+        lp.addControlParam("$ios_url", withValue: "https://help.branch.io/developers-hub/docs/ios-sdk-overview")
+        lp.addControlParam("$android_url", withValue: "https://help.branch.io/developers-hub/docs/android-sdk-overview")
+        lp.addControlParam("$canonical_url", withValue: "https://www.apple.com/imacpurple")
+        
+        
+        
+        // Branch.io - Call Share Sheet
+        buo.showShareSheet(with: lp, andShareText: "Check out this Product", from: UIApplication.shared.windows.first?.rootViewController) { (string, bool, error) in
+            guard error == nil else { return }
+            // String = Sharing Method (Messages || CopyToPasteboard || Mail || etc)
+            // Bool = Share Completed/Not Completed
+            // Error = Sharing Error
+            // String = Sharing Method (Messages || CopyToPasteboard || Mail || etc)
+            // Bool = Share Completed/Not Completed
+            // Error = Sharing Error
+            if bool {
+                // Share Sheet sent
+                print("Share Sheet Completed")
+            }
+        }
+    }
+
 }
 
 struct ProductDetailView_Previews: PreviewProvider {

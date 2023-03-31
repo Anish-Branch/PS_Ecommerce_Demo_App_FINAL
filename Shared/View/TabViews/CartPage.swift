@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import BranchSDK
 
 // Since both of the views are mostly identical....
 struct CartPage: View {
@@ -28,6 +29,7 @@ struct CartPage: View {
                             
                             Text("Basket")
                                 .font(.custom(customFont, size: 28).bold())
+                                .foregroundColor(.black)
                             
                             Spacer()
                             
@@ -42,7 +44,7 @@ struct CartPage: View {
                                     .frame(width: 25, height: 25)
                             }
                             .opacity(sharedData.cartProducts.isEmpty ? 0 : 1)
-
+                            
                         }
                         
                         // checking if liked products are empty...
@@ -58,6 +60,7 @@ struct CartPage: View {
                                 Text("No Items added")
                                     .font(.custom(customFont, size: 25))
                                     .fontWeight(.semibold)
+                                    .foregroundColor(.black)
                                 
                                 Text("Hit the plus button to save into basket.")
                                     .font(.custom(customFont, size: 18))
@@ -68,7 +71,7 @@ struct CartPage: View {
                             }
                         }
                         else{
-                         
+                            
                             // Displaying Products...
                             VStack(spacing: 15){
                                 
@@ -87,7 +90,7 @@ struct CartPage: View {
                                                     .foregroundColor(.red)
                                             }
                                             .padding(.trailing)
-
+                                            
                                         }
                                         
                                         CardView(product: $product)
@@ -111,6 +114,7 @@ struct CartPage: View {
                             Text("Total")
                                 .font(.custom(customFont, size: 14))
                                 .fontWeight(.semibold)
+                                .foregroundColor(.black)
                             
                             Spacer()
                             
@@ -119,10 +123,7 @@ struct CartPage: View {
                                 .foregroundColor(Color("Purple"))
                         }
                         
-                        Button {
-                            
-                        } label: {
-                            
+                        NavigationLink(destination: OrderConfirmationPage().navigationBarBackButtonHidden(true)) {
                             Text("Checkout")
                                 .font(.custom(customFont, size: 18).bold())
                                 .foregroundColor(.white)
@@ -132,6 +133,9 @@ struct CartPage: View {
                                 .cornerRadius(15)
                                 .shadow(color: Color.black.opacity(0.05), radius: 5, x: 5, y: 5)
                         }
+                        .onTapGesture {
+                            branchEventLogin()
+                        }
                         .padding(.vertical)
                     }
                     .padding(.horizontal,25)
@@ -140,11 +144,28 @@ struct CartPage: View {
             .navigationBarHidden(true)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
-            
+                
                 Color("HomeBG")
                     .ignoresSafeArea()
             )
         }
+    }
+
+    // Branch.io - Track Event - User Login
+    func branchEventLogin(){
+        // Create a BranchUniversalObject with your content data:
+        let branchUniversalObject = BranchUniversalObject.init()
+
+        // Create a BranchEvent:
+        let event = BranchEvent.standardEvent(.login)
+
+        // Add the BranchUniversalObject with the content (do not add an empty branchUniversalObject):
+        event.contentItems     = [ branchUniversalObject ]
+
+        // Add relevant event data:
+        event.alias            = "User Login"
+        event.eventDescription = "User has logged in"
+        event.logEvent() // Log the event.
     }
     
     func deleteProduct(product: Product){
@@ -179,6 +200,7 @@ struct CardView: View{
             Image(product.productImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
+                .cornerRadius(25)
                 .frame(width: 100, height: 100)
             
             VStack(alignment: .leading, spacing: 8) {
@@ -186,6 +208,7 @@ struct CardView: View{
                 Text(product.title)
                     .font(.custom(customFont, size: 18).bold())
                     .lineLimit(1)
+                    .foregroundColor(.black)
                 
                 Text(product.price)
                     .font(.custom(customFont, size: 17))
